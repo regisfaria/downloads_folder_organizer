@@ -1,4 +1,5 @@
 # Downloads Watcher
+<a href="https://github.com/regisfaria/downloads_folder_organizer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/regisfaria/![GitHub](https://img.shields.io/github/license/regisfaria/https://github.com/regisfaria/downloads_folder_organizer)?style=plastic" alt="LICENSE"></a>
 
 ## Overview 
   This project is a way to automatic organize you'r PC download's folder .
