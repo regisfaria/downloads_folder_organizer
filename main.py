@@ -31,29 +31,34 @@ from watchdog.events import FileSystemEventHandler
 from datetime import datetime
 
 import json
+import getpass
 import os
 import time
 import shutil
 
-
-downloads_folder = "/home/regisf/Downloads"
+downloads_folder = "~/Downloads"
 def type_check(filename):
     # Folder settings
-    # Set this accordingly with your folder location
-    pictures_folder = "/home/regisf/Pictures"
-    documents_folder = "/home/regisf/Documents"
+    pictures_folder = "~/Pictures"
+    documents_folder = "~/Documents"
+    videos_folder = "~/Videos"
     
+    # Get file extention
     extention = filename.split('.')[-1]
     
     # File extention settings
-    # [ ] Add more extentions later
+    # DEVNOTE: I will add more extentions when needed
     img_extentions = ['jpg', 'jpeg', 'png']
     docs_extentions = ['pdf']
+    video_extentions = ['mp4', 'mkv', 'avi', 'AVI']
 
+    # check if that kind of file will be moved
     if extention in img_extentions:
         new_destination = pictures_folder
     elif extention in docs_extentions:
         new_destination = documents_folder
+    elif extention in video_extentions:
+        new_destination = videos_folder
     # If the file is not on the ext list, I won't move it
     else:
         new_destination = False
@@ -63,7 +68,7 @@ def type_check(filename):
 def is_downloading(filepath):
     while True:
         actual_size = os.stat(filepath)[6]
-        time.sleep(1.5)
+        time.sleep(2.5)
         modified_size = os.stat(filepath)[6]
         if actual_size == modified_size:
             return
@@ -97,6 +102,12 @@ class Handler(FileSystemEventHandler):
 
 
 ##############################################################################################
+
+'''
+07/04/2020 TO DO: look into how __init__ works [ ]
+
+below is the code starter... I should look on how to make a __init__.py or even a __init__ function
+'''
 event_handler = Handler()
 observer = Observer()
 observer.schedule(event_handler, downloads_folder, recursive=True)
