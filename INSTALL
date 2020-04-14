@@ -21,13 +21,13 @@ done
 if [ format_enabled == "y" ]; then
     chmod +x start_organizer_format
     sudo cp start_organizer_format /etc/init.d
-    sudo update-rc.d /etc/init.d/start_organizer_format defaults
+    sudo update-rc.d start_organizer_format defaults
     
     ./start_organizer_format $(pwd)
 else
     chmod +x start_organizer
     sudo cp start_organizer /etc/init.d
-    sudo update-rc.d /etc/init.d/start_organizer defaults
+    sudo update-rc.d start_organizer defaults
     
     ./start_organizer $(pwd)
 fi
