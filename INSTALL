@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#updating and installing requirements
+sudo apt update
+sudo apt install python3
+sudo apt install python3-pip
+
+pip3 install watchdog
+
+echo "please read README.md for informations about formating feature"
+while true; do
+    read -p "Do you wish to enable the formating feature?(default: no) " yn
+    case $yn in
+        [Yy]* ) format_enabled=( "y" ); break;;
+        ""* ) format_enabled=( "n" ); break;;
+        [Nn]* ) format_enabled=( "n" ); break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+if [ format_enabled == "y" ]; then
+    chmod +x start_organizer_format
+    sudo cp start_organizer_format /etc/init.d
+    sudo update-rc.d /etc/init.d/start_organizer_format defaults
+    
+    ./start_organizer_format $(pwd)
+else
+    chmod +x start_organizer
+    sudo cp start_organizer /etc/init.d
+    sudo update-rc.d /etc/init.d/start_organizer defaults
+    
+    ./start_organizer $(pwd)
+fi
