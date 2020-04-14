@@ -36,13 +36,47 @@ import os
 import time
 import shutil
 import sys
+import logging
 
-downloads_folder = "~/Downloads"
+# Directory setup
+script_directory = os.path.dirname(os.path.abspath(__file__))
+script_name = os.path.basename(__file__)
+
+# Logs directory setup
+logs_directory = os.path.join(script_directory, 'logs')
+if not os.path.exists(logs_directory):
+    os.makedirs(logs_directory)
+
+# LOGGING
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_template = '%(asctime)s %(module)s %(levelname)s: %(message)s'
+formatter = logging.Formatter(log_template)
+
+# Logging - File Handler
+log_file_size_in_mb = 10
+count_of_backups = 5  # example.log example.log.1 example.log.2
+log_file_size_in_bytes = log_file_size_in_mb * 1024 * 1024
+log_filename = os.path.join(logs_directory, os.path.splitext(script_name)[0]) + '.log'
+file_handler = handlers.RotatingFileHandler(log_filename, maxBytes=log_file_size_in_bytes,
+                                            backupCount=count_of_backups)
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# Logging - STDOUT Handler
+stdout_handler = logging.StreamHandler(sys.stdout)
+stdout_handler.setFormatter(formatter)
+logger.addHandler(stdout_handler)
+
+
+folder_prefix = "/home/" + sys.argv[1] + "/"
+downloads_folder = folder_prefix + "Downloads"
 def type_check(filename):
     # Folder settings
-    pictures_folder = "~/Pictures"
-    documents_folder = "~/Documents"
-    videos_folder = "~/Videos"
+    pictures_folder = folder_prefix + "Pictures"
+    documents_folder = folder_prefix + "Documents"
+    videos_folder = folder_prefix + "Videos"
     
     # Get file extention
     extention = filename.split('.')[-1]
@@ -79,27 +113,36 @@ def is_downloading(filepath):
 class Handler(FileSystemEventHandler):
     def on_modified(self, event):
         for filename in os.listdir(downloads_folder):
-            #print(filename)
             new_destination = type_check(filename)
             # Add move date to the file name
-            new_name = str(datetime.now()).split()[0] + ' - ' + filename
+            try:
+                if sys.argv[2] == "-format":
+                    new_name = "[" + str(datetime.now()).split()[0] + "]" + filename
+            except:
+                new_name = filename
             
-            # if we will move the file AND the file don't exists on the destiny folder
-            if new_destination and not os.path.isfile(new_destination + "/" + new_name):            
-                # Set paths
-                src = downloads_folder + "/" + filename
-                new_destination += "/" + new_name
-                
-                # Check if the file is downloading
-                is_downloading(src)
+            try:
+                # if we will move the file AND the file don't exists on the destiny folder
+                if new_destination and not os.path.isfile(new_destination + "/" + new_name):            
+                    logging.debug('Moving file "{}" to {} directory'.format(filename, new_destination.split('/')[-1]))
+                    # Set paths
+                    src = downloads_folder + "/" + filename
+                    new_destination += "/" + new_name
+                    
+                    # Check if the file is downloading
+                    is_downloading(src)
 
-                shutil.move(src, new_destination)
-                time.sleep(1)
-                # Sometimes we have a junk file on the old folder, so we will delete it, if it's there
-                try:
-                    os.remove(src)
-                except:
-                    continue
+                    shutil.move(src, new_destination)
+                    time.sleep(1)
+                    # Sometimes we have a junk file on the old folder, so we will delete it, if it's there
+                    try:
+                        os.remove(src)
+                    except:
+                        continue
+            except Exception as e:
+                logger.debug("A problem was found: {}".format(e))
+                logger.debug('Error found when moving file "{}"'.format(filename))
+                logger.debug("Please contact: regisprogramming@gmail.com for bug report")
 
 
 ##############################################################################################
