@@ -103,7 +103,7 @@ def type_check(filename):
 def is_downloading(filepath):
     while True:
         actual_size = os.stat(filepath)[6]
-        time.sleep(2.5)
+        time.sleep(4)
         modified_size = os.stat(filepath)[6]
         if actual_size == modified_size:
             return
