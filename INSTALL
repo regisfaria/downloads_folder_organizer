@@ -18,23 +18,16 @@ while true; do
     esac
 done
 
-add()
-{
-    grep -Fq "$1" mycron || echo "$1" >> mycron
-}
-
 if [ format_enabled == "y" ]; then
     sudo mkdir /home/$(id -un)/.downloads_organizer
     sudo cp src/main.py /home/$(id -un)/.downloads_organizer
-
-    add "@reboot python3 ~/.downloads_organizer/main.py $(id -un) -format"
+    sudo cp crontab_format /etc/cron.d/
     
     python3 src/main.py $(id -un) -format &
 else
     sudo mkdir /home/$(id -un)/.downloads_organizer
     sudo cp src/main.py /home/$(id -un)/.downloads_organizer
-
-    add "@reboot python3 ~/.downloads_organizer/main.py $(id -un)"
+    sudo cp crontab /etc/cron.d/
     
     python3 src/main.py $(id -un) &
 fi
