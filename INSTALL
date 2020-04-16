@@ -19,15 +19,17 @@ while true; do
 done
 
 if [ format_enabled == "y" ]; then
-    chmod +x start_organizer_format
-    sudo cp start_organizer_format /etc/init.d
-    sudo update-rc.d start_organizer_format defaults
+    sudo mkdir /home/$(id -un)/.downloads_organizer
+    sudo cp src/main.py /home/$(id -un)/.downloads_organizer
+
+    crontab -l -u $(id -un) | cat - crontab_format.txt | crontab -u $(id -un) -
     
-    ./start_organizer_format $(pwd)
+    python3 src/main.py $(id -un) -format &
 else
-    chmod +x start_organizer
-    sudo cp start_organizer /etc/init.d
-    sudo update-rc.d start_organizer defaults
+    sudo mkdir /home/$(id -un)/.downloads_organizer
+    sudo cp src/main.py /home/$(id -un)/.downloads_organizer
+
+    crontab -l -u $(id -un) | cat - crontab.txt | crontab -u $(id -un) -
     
-    ./start_organizer $(pwd)
+    python3 src/main.py $(id -un) &
 fi

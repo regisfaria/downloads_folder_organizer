@@ -1,0 +1,1 @@
+@reboot python3 ~/.downloads_organizer/main.py $(id -un)
