@@ -17,6 +17,14 @@
 ## Instalation
   Just run ./INSTALL and it will install everything that you need to run the code and setup a crontab to run it everytime the system boots.
 
+OBS: contact me if you have problem with it not starting on startup.
+IF IT IS NOT STARTING ON STARTUP: Just add the below line of code.
+```
+$ crontab -e
+@reboot python3 ~/.downloads_organizer/main.py $(id -un)
+```
+NOTE: add -format at the end if you want to use the formating feature instead. 
+
 ## Contact
 Email: regisprogramming@gmail.com
 
